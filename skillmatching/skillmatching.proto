@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+//
+// skill matcher
+//
+
+message SkillMatchRequest {
+    string ontology = 1; // path to ontology
+    bool positive = 2;   // request positive matches
+    bool negative = 3;   // request negative matches
+}
+
+message SkillMatchTriple {
+    // classes in the ontology
+    // = what we require from the machine
+    // e.g. [UnsealedBox,BlueSeal] (as inputs)
+    repeated string requirement = 1;
+
+    // a class in the ontology
+    // = what the machine offers
+    // e.g. [BoxClosewithBlueSealSkill,BlueSealedBox] (as skill + outputs)
+    repeated string offer = 2;
+
+    // an instance in the ontology
+    // = the machine that offers or does not provide the offer under the requirement
+    // e.g. "sealerunit1"
+    string module = 3;
+}
+
+message SkillMatchResult {
+    // all pairs of requirements/offers that match
+    repeated SkillMatchTriple positiveMatches = 1;
+    // all pairs of requirements/offers that do not
+    repeated SkillMatchTriple negativeMatches = 2;
+}
+
+// for the following, see docs/Pipeline-AI4EUExperimentsPlatform.md
+
+//
+// service SkillMatcher {
+//     rpc compute(SkillMatchRequest) returns (SkillMatchResult);
+// }
+
+message DesiredMagazineState {
+    // which sequence of products is expected in this magazine (at most 3)
+    repeated string output = 1;
+}
+
+message PlannerRequest {
+    // path to ontology that provides the topology
+    string ontology = 2;
+    // which magazine states are expected (at most 3)
+    repeated DesiredMagazineState goal = 1;
+    // maximum number of time steps to consider (at most 20)
+    uint32 max_time_step = 3;
+}
+
+message SkillMatchAndPlannerRequest {
+    SkillMatchRequest skillmatchRequest = 1;
+    PlannerRequest plannerRequest = 2;
+}
+
+message SkillMatchResultAndPlannerRequest {
+    SkillMatchResult skillmatchResult = 1;
+    PlannerRequest plannerRequest = 2;
+}
+
+service SkillMatcher {
+    rpc compute(SkillMatchAndPlannerRequest) returns (SkillMatchResultAndPlannerRequest);
+}

@@ -1,0 +1,16 @@
+This is a drop-in replacement for the proprietary Siemens Skill Matching module.
+It works only for the ontology present currently used in the planning framework.
+
+In principle, the planner works without skill matching, but skill matching
+provides additional precondition for planning actions.
+
+Format:
+
+Requirements => Offers : Machine
+
+R = {UncappedWorkpiece,RoundWorkpiece}
+
+R => {PutCapOnWorkpieceSkill,BlueCap} : PressCapUnit1
+R => {PutCapOnWorkpieceSkill,RedCap} : PressCapUnit1
+R => {PutCapOnWorkpieceSkill,WhiteCap} : PressCapUnit2
+R => {PutCapOnWorkpieceSkill,RedCap} : PressCapUnit2
