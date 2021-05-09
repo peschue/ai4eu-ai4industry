@@ -1,0 +1,38 @@
+
+div.requestform, div.result {
+  border: 2pt solid black;
+  float:left;
+  padding: 4px;
+}
+
+div.result {
+  margin-top: 4px;
+}
+
+div.requestform-rest {
+  width:auto;
+  clear:right;
+}
+
+.requestform span, .requestform p, .requestform input {
+  margin: 4px;
+}
+
+div.mags {
+  display:block;
+  clear:both;
+}
+
+div.mag {
+  display:block;
+  float:left;
+  margin:10px;
+}
+
+div.clear {
+  clear:both;
+}
+
+pre {
+  margin:4px;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AI4EU AI4Industry Pilot Demonstration User Interface</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="gui.js"></script>
+    <link rel="stylesheet" href="gui.css" />
+  </head>
+
+  <body>
+    <h1>AI4EU AI4Industry Pilot Demonstration User Interface</h1>
+
+    <div class="requestform">
+        <p>Desired Output Magazine State:</p>
+        <div class="mags">
+        {% for MAG in [0,1,2] %}
+          <div class="mag">
+            <span class="magcaption">Magazine #{{MAG}}:</span>
+            {% for IT in [2,1,0] %}
+              <div class="item">
+                <span class="itemcaption">#{{IT}}:</span>
+                {% for C in ['red','white','blue','empty'] %}
+                  <input type="radio" class="itemrb"
+                    name="item_{{MAG}}_{{IT}}" id="item_{{MAG}}_{{IT}}_{{C}}" 
+                    value="{{C}}"
+                    {% if C == 'empty' %}checked="checked"{% endif %}>{{C}}</input>
+                {% endfor %}
+                &nbsp;
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+        <div class="clear"></div>
+      </div>
+      <p>
+        A magazine is a stack of items where #0 is the bottom of the stack and #2 is the top.
+      </p>
+      <p>
+        Item #2 can only be present if item #1 is present
+        and the same is true for items #1 and #0.
+      </p>
+      <p>
+        Maximum number of planning steps:
+        <input type="number" min="1" max="25" id="maxstep" value="10"></input>
+      </p>
+      <input id="submit" type="button" value="Submit to Pipeline"></input>
+    </div>
+    <div class="requestform-rest"></div>
+
+    <div class="result clear">
+      <pre id="result">The result of the pipeline run will appear here.</pre>
+    </div>
+  </body>
+</html>

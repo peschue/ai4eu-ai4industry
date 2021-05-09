@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+// package sudoku_gui;
+
+message Empty {
+}
+
+//
+// pipeline trigger
+//
+
+message SkillMatchRequest {
+  string ontology = 1; // path to ontology
+  bool positive = 2;   // request positive matches
+  bool negative = 3;   // request negative matches
+}
+
+message DesiredMagazineState {
+  // which sequence of products is expected in this magazine (at most 3)
+  repeated string output = 1;
+}
+
+message PlannerRequest {
+  // path to ontology that provides the topology
+  string ontology = 2;
+  // which magazine states are expected (at most 3)
+  repeated DesiredMagazineState goal = 1;
+  // maximum number of time steps to consider (at most 20)
+  uint32 max_time_step = 3;
+}
+
+message SkillMatchAndPlannerRequest {
+  SkillMatchRequest skillmatchRequest = 1;
+  PlannerRequest plannerRequest = 2;
+}
+
+//
+// pipeline result
+//
+
+message Action {
+  uint32 timestep = 1;
+  string action = 2;
+}
+
+message PlannerResult {
+  repeated Action actions = 1;
+}
+
+message ProductEstimatedTime {
+  string product = 1;              // name of product
+  float estimatedTimeInSystem = 2; // seconds
+}
+
+message TimeEstimateResult {
+  repeated ProductEstimatedTime time = 1;
+}
+
+message PlannerResultAndTimeEstimateResult {
+  PlannerResult plannerResult = 1;
+  TimeEstimateResult timeEstimateResult = 2;
+}
+
+service AI4IndustryGUI {
+  rpc requestPipelineRun(Empty) returns (SkillMatchAndPlannerRequest);
+  rpc displayPipelineResult(PlannerResultAndTimeEstimateResult) returns (Empty);
+}
