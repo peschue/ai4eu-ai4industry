@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+//
+// input
+//
+
+// passthrough from planner (see docs/)
+message Action {
+    uint32 timestep = 1;
+    string action = 2;
+}
+
+message PlannerResult {
+    repeated Action actions = 1;
+}
+
+// input of time prediction
+message ProductInput {
+    string product = 1; // name of the product, for identification in result
+    string type = 2;    // red, white, blue
+    float timeEnteringSystem = 3; // seconds
+}
+
+message TimeEstimateRequest {
+    repeated ProductInput products_entering_system = 1;
+}
+
+// composite input
+message PlannerResultAndTimeEstimateRequest {
+    PlannerResult plannerResult = 1;
+    TimeEstimateRequest timeEstimateRequest = 2;
+}
+
+//
+// output
+//
+
+// output of time prediction
+message ProductEstimatedTime {
+    string product = 1;              // name of product
+    float estimatedTimeInSystem = 2; // seconds
+}
+
+message TimeEstimateResult {
+    repeated ProductEstimatedTime time = 1;
+}
+
+// composite output
+message PlannerResultAndTimeEstimateResult {
+    PlannerResult plannerResult = 1;
+    TimeEstimateResult timeEstimateResult = 2;
+}
+
+// service
+service TimeEstimator {
+    rpc compute(PlannerResultAndTimeEstimateRequest) returns (PlannerResultAndTimeEstimateResult);
+}

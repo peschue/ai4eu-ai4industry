@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+tensorflow = "==1.15"
+
+[dev-packages]
+tqdm = "*"
+scikit-learn = "*"
+numpy = "*"
+pandas = "*"
+matplotlib = "*"
+jupyter = "*"
+tensorflow-gpu = "==1.15"
+
+[requires]
+python_version = "3.6"
