@@ -1,0 +1,289 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.ai4eu.eu/pilot/ai4industry#"
+     xml:base="http://www.ai4eu.eu/pilot/ai4industry"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:ai4industry="http://www.ai4eu.eu/pilot/ai4industry#">
+    <owl:Ontology rdf:about="http://www.ai4eu.eu/pilot/ai4industry"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#canFeedInto -->
+
+    <owl:ObjectProperty rdf:about="http://www.ai4eu.eu/pilot/ai4industry#canFeedInto">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Machine"/>
+        <rdfs:range rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Machine"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#BaseProviderUnit -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#BaseProviderUnit">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#LogisticsMachine"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#BlueCap -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#BlueCap">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Cap"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#BlueCappedCan -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#BlueCappedCan">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#CappedCan"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#Can -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#Can">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Material"/>
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#RoundWorkpiece"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#Cap -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#Cap">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Material"/>
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#RoundWorkpiece"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#CappedCan -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#CappedCan">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Can"/>
+        <owl:disjointWith rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#UncappedCan"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#ConveyorBeltUnit -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#ConveyorBeltUnit">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#LogisticsMachine"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#LogisticsMachine -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#LogisticsMachine">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Machine"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#Machine -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#Machine"/>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#Material -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#Material"/>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#PressCapUnit -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#PressCapUnit">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#ProcessingMachine"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#ProcessingMachine -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#ProcessingMachine">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Machine"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#RedCap -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#RedCap">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Cap"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#RedCappedCan -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#RedCappedCan">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#CappedCan"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#StorageUnit -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#StorageUnit">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#LogisticsMachine"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#UncappedCan -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#UncappedCan">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Can"/>
+        <rdfs:subClassOf rdf:about="http://www.ai4eu.eu/pilot/ai4industry#UncappedWorkpiece"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#WhiteCap -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#WhiteCap">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Cap"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#WhiteCappedCan -->
+
+    <owl:Class rdf:about="http://www.ai4eu.eu/pilot/ai4industry#WhiteCappedCan">
+        <rdfs:subClassOf rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#CappedCan"/>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#supplier1">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#BaseProviderUnit"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#conv1"/>
+    </owl:NamedIndividual>
+
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#conv1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#conv1">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#ConveyorBeltUnit"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#conv2"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#presscap1"/>
+    </owl:NamedIndividual>
+    
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#presscap1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#presscap1">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#PressCapUnit"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#conv3"/>
+    </owl:NamedIndividual>
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#conv2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#conv2">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#ConveyorBeltUnit"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#conv3"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#presscap2"/>
+    </owl:NamedIndividual>
+    
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#presscap2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#presscap2">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#PressCapUnit"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#conv1"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#storage1"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#storage2"/>
+    </owl:NamedIndividual>
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#conv3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#conv3">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#ConveyorBeltUnit"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#conv1"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#storage1"/>
+        <canFeedInto rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#storage2"/>
+    </owl:NamedIndividual>
+    
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#storage1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#storage1">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#StorageUnit"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#storage2">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#StorageUnit"/>
+    </owl:NamedIndividual>
+
+
+    <!-- http://www.ai4eu.eu/pilot/ai4industry#supplier1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#GenericCan">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Can"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#GenericCap">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#Cap"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#GenericCapBlue">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#BlueCap"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#GenericCapRed">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#RedCap"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.ai4eu.eu/pilot/ai4industry#GenericCapWhite">
+        <rdf:type rdf:resource="http://www.ai4eu.eu/pilot/ai4industry#WhiteCap"/>
+    </owl:NamedIndividual>
+
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

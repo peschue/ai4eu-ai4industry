@@ -1,0 +1,7 @@
+{
+    "load-uri": "/app/ontology.owl",
+    "namespaces": {
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "ai4industry": "http://www.ai4eu.eu/pilot/ai4industry#"
+    }
+}

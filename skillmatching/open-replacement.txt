@@ -8,9 +8,9 @@ Format:
 
 Requirements => Offers : Machine
 
-R = {UncappedWorkpiece,RoundWorkpiece}
+R = {RoundWorkpiece}
 
-R => {PutCapOnWorkpieceSkill,BlueCap} : PressCapUnit1
-R => {PutCapOnWorkpieceSkill,RedCap} : PressCapUnit1
-R => {PutCapOnWorkpieceSkill,WhiteCap} : PressCapUnit2
-R => {PutCapOnWorkpieceSkill,RedCap} : PressCapUnit2
+R => {BlueCap} : PressCapUnit1
+R => {RedCap} : PressCapUnit1
+R => {WhiteCap} : PressCapUnit2
+R => {RedCap} : PressCapUnit2

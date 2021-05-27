@@ -54,6 +54,9 @@ $(document).ready(function() {
   })
 
   $('#submit').click(function(ev) {
+
+    $('#result').html("submitting to pipeline");
+
     var goal = []
     for(let mag of [0,1,2]) {
       for(let itm of [0,1,2]) {

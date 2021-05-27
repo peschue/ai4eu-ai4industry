@@ -13,7 +13,7 @@
     <div class="requestform">
         <p>Desired Output Magazine State:</p>
         <div class="mags">
-        {% for MAG in [0,1,2] %}
+        {% for MAG in [0,1] %}
           <div class="mag">
             <span class="magcaption">Magazine #{{MAG}}:</span>
             {% for IT in [2,1,0] %}
@@ -23,7 +23,7 @@
                   <input type="radio" class="itemrb"
                     name="item_{{MAG}}_{{IT}}" id="item_{{MAG}}_{{IT}}_{{C}}" 
                     value="{{C}}"
-                    {% if C == 'empty' %}checked="checked"{% endif %}>{{C}}</input>
+                    {% if (IT in [1,2] and C == 'empty') or (MAG,C) in [(0,'red'),(1,'blue')] %}checked="checked"{% endif %}>{{C}}</input>
                 {% endfor %}
                 &nbsp;
               </div>
@@ -40,15 +40,36 @@
         and the same is true for items #1 and #0.
       </p>
       <p>
+        Currently there are two machines for pressing caps onto cans:
+        <dl>
+          <dt>Presscap1</dt>
+          <dd>has the following caps in the magazine: blue, red, blue</dd>
+          <dt>Presscap2</dt>
+          <dd>has the following caps in the magazine: red, white, white</dd>
+        </dl>
+        The caps earlier in the respective list must be used before the ones later in the respective list.
+      </p>
+      <p>
         Maximum number of planning steps:
         <input type="number" min="1" max="25" id="maxstep" value="10"></input>
       </p>
       <input id="submit" type="button" value="Submit to Pipeline"></input>
     </div>
-    <div class="requestform-rest"></div>
+
+    <div class="image">
+      <p>The following is a visualization of the factory layout, input magazines of both Presscap modules and output magazines.</p>
+      <img alt="Factory Visualization" src="visualisation-webinterface.png" />
+    </div>
 
     <div class="result clear">
+      <div class="clear"></div>
       <pre id="result">The result of the pipeline run will appear here.</pre>
+      <div class="clear"></div>
+    </div>
+
+    <div class="authors">
+      <p>The AI4Industry Pilot is a collaboration of Technische Universit&auml;t Wien, Siemens AG Germany, and Fraunhofer IAIS</p>
+      <p>Contact: <a href="mailto:peter.schueller@tuwien.ac.at">peter.schueller@tuwien.ac.at</a></p>
     </div>
   </body>
 </html>

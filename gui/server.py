@@ -17,7 +17,7 @@ import gui_pb2
 import gui_pb2_grpc
 
 
-ONTOLOGY = 'ontology.owl'
+ONTOLOGY = '/app/ontology.json'
 
 
 logger = logging.getLogger(__name__)
@@ -73,8 +73,10 @@ class GUIServicerImpl(gui_pb2_grpc.AI4IndustryGUIServicer):
         planresult = request.plannerResult
         last_step = None
         for a in sorted(planresult.actions, key=lambda x: x.timestep):
-            stepstring = ' '*9
+            stepstring = ' ' * 9
             if last_step is None or last_step != a.timestep:
+                if last_step != a.timestep:
+                    ol.append('')
                 stepstring = 'Step %2d: ' % a.timestep
             ol.append(stepstring + a.action)
             last_step = a.timestep
@@ -130,6 +132,11 @@ def serve_css(request: fastapi.Request):
     return fastapi.responses.FileResponse("gui.css", headers={'Cache-Control': 'no-cache'})
 
 
+@app.get('/visualisation-webinterface.png')
+def serve_image(request: fastapi.Request):
+    return fastapi.responses.FileResponse("visualisation-webinterface.png", headers={'Cache-Control': 'no-cache', 'Content-type': 'image/png'})
+
+
 @app.post('/goal', response_model=None)
 def goal(goalinfo: GoalInformation) -> None:
     '''
@@ -152,7 +159,7 @@ def goal(goalinfo: GoalInformation) -> None:
     }
 
     # configure three magazines
-    for mag in [0, 1, 2]:
+    for mag in [0, 1]:
         dms = gui_pb2.DesiredMagazineState()
         for itm in [0, 1, 2]:
             color = magazineinfo.get((mag, itm), None)

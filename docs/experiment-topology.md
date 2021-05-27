@@ -1,8 +1,37 @@
-see [experiment-topology.drawio.pdf](experiment-topology.drawio.pdf)
+see [ai4industry-interaces-pipelines.pdf](ai4industry-interaces-pipelines.pdf)
 
-# March Release of AI4EU Platform: Passthrough RPC Pipeline (Page 1)
+# (Currently) impossible: RPC-based communication with Splitter and Collator (page 1)
 
-We need to create a linear "Pipeline" with passthrough components.
+Via Splitter:
+* GUI -SkillMatchRequest-> Skillmatcher
+* GUI -PlannerRequest ...
+
+Via Collator:
+* ... PlannerRequest-> Planner
+* Skillmatcher -SkillMatchResult-> Planner
+
+Via Splitter:
+* Planner -TimeEstimateRequest-> Timeprediction
+* Planner -PlannerResult ...
+
+Via Collator:
+* ... PlannerResult -> GUI
+* Timeprediction -TimeEstimateResult-> GUI
+
+```
+service SkillMatcher {
+    rpc compute(SkillMatchRequest) returns (SkillMatchResult);
+}
+
+service AI4IndustryGUI {
+    rpc requestPipelineRun(Empty) returns (SkillMatchAndPlannerRequest);
+    rpc displayPipelineResult(PlannerResultAndTimeEstimateResult) returns (Empty);
+}
+```
+
+This does not work, because a Splitter output cannot be connected to a Collator input.
+
+# March Release of AI4EU Platform: Passthrough RPC Pipeline (Page 2)
 
 * GUI -> Skillmatcher (SkillMatchAndPlannerRequest)
 * Skillmatcher -> Planner (SkillMatchResultAndPlannerRequest)
@@ -56,3 +85,17 @@ service AI4IndustryGUI {
     rpc displayTimeEstimateResult(stream TimeEstimateResult) returns (Empty);
 }
 ```
+
+# Most elegant solution: Event-based communication + implicit collation/splitting (Page 4)
+
+We have parallel streams only for things that do not happen at the same time
+(in this case only for GUI updates).
+
+* GUI streams out SkillMatchAndPlannerRequest
+* Platform implicitly sends only SkillMatchRequest to Skillmatching
+* Platform implicitly collects pairs (SkillMatchResult, PlannerRequest) and calls Planning with each pair
+* Planning produces PlannerResultAndTimeEstimateRequest as output
+* Platform implicitly sends PlannerResult to input stream of GUI for display
+* Platform implicitly sends TimeEstimateRequest to TimeEstimation
+* TimeEstimation produces TimeEstimateResult
+* Platform streams TimeEstimateResult into GUI

@@ -11,9 +11,11 @@
 # It basically helps with docker commands and compiling protobuf.
 #
 
+import logging
+import os
+import shutil
 import subprocess
 import sys
-import logging
 
 # we describe each image and which ports need to be redirected to which ports
 # according to the container specification,
@@ -27,14 +29,14 @@ METADATA = {
         'version': '1.0',
         'ports': {8061: 8002},
     },
-    # 'planning': {
-    #     'version': '1.0',
-    #     'ports': {8061: 8003},
-    # },
-    # 'timeprediction': {
-    #     'version': '1.0',
-    #     'ports': {8061: 8003},
-    # },
+    'planning': {
+        'version': '1.0',
+        'ports': {8061: 8003},
+    },
+    'timeprediction': {
+        'version': '1.0',
+        'ports': {8061: 8004},
+    },
 }
 
 # this is used as prefix for local images and containers
@@ -43,8 +45,7 @@ BASENAME = 'ai4eu-ai4industry'
 REMOTE_REPO = 'cicd.ai4eu-dev.eu:7444/pilots/ai4industry'
 # REMOTE_REPO = 'peterschueller/test'
 
-COMPONENTS = ['gui', 'skillmatching']
-# COMPONENTS = ['gui', 'skillmatching', 'planning', 'timeprediction']
+COMPONENTS = ['gui', 'skillmatching', 'planning', 'timeprediction']
 
 USAGE = '''
 Helps to build/deploy the AI4Industry Pilot for the AI4EU Experiments Platform.
@@ -88,6 +89,16 @@ def build_protobufs():
         logging.info('running in %s', component)
         cmd_info(cmd, cwd=component)
         subprocess.check_call(cmd, cwd=component, shell=True, stdout=sys.stdout, stderr=sys.stderr)
+
+    if 'planning' in COMPONENTS:
+        dest = 'planning/scripts/'
+        logging.info("moving 'planning' generated files into '%s'", dest)
+        for genf in ['planning_pb2.py', 'planning_pb2_grpc.py']:
+            try:
+                os.remove(dest + genf)
+            except FileNotFoundError:
+                pass  # ignore if file already exists
+            shutil.move('planning/' + genf, dest)
 
 
 def build(component):

@@ -1,0 +1,7 @@
+{
+    "gui-webserverport": 8000,
+    "gui-grpcport": 8001,
+    "skillmatching-grpcport": 8002,
+    "planning-grpcport": 8003,
+    "timeprediction-grpcport": 8004
+}

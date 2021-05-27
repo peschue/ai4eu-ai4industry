@@ -29,27 +29,28 @@ class GRPCServicer(smgrpc.SkillMatcher):
 
         See also open-replacement.txt
         '''
-        r = ['UncappedWorkpiece', 'RoundWorkpiece']
+        ns = 'http://www.ai4eu.eu/pilot/ai4industry#'
+        r = [ns + 'RoundWorkpiece']
         # pre-defined responses to certain requests
         self.PREDEFINED_RESPONSES = {
-            ('ontology.owl', True, False): smpb.SkillMatchResult(
+            ('/app/ontology.json', True, False): smpb.SkillMatchResult(
                 positiveMatches=[
                     smpb.SkillMatchTriple(
                         requirement=r,
-                        offer=['PutCapOnWorkpieceSkill', 'BlueCap'],
-                        module='http://www.ai4eu.eu/pilot/ai4industry#presscap1'),
+                        offer=[ns + 'BlueCap'],
+                        module=ns + 'presscap1'),
                     smpb.SkillMatchTriple(
                         requirement=r,
-                        offer=['PutCapOnWorkpieceSkill', 'RedCap'],
-                        module='http://www.ai4eu.eu/pilot/ai4industry#presscap1'),
+                        offer=[ns + 'RedCap'],
+                        module=ns + 'presscap1'),
                     smpb.SkillMatchTriple(
                         requirement=r,
-                        offer=['PutCapOnWorkpieceSkill', 'RedCap'],
-                        module='http://www.ai4eu.eu/pilot/ai4industry#presscap2'),
+                        offer=[ns + 'RedCap'],
+                        module=ns + 'presscap2'),
                     smpb.SkillMatchTriple(
                         requirement=r,
-                        offer=['PutCapOnWorkpieceSkill', 'WhiteCap'],
-                        module='http://www.ai4eu.eu/pilot/ai4industry#presscap2'),
+                        offer=[ns + 'WhiteCap'],
+                        module=ns + 'presscap2'),
                 ],
                 negativeMatches=[]
             )

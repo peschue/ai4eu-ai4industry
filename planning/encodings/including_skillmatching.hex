@@ -1,0 +1,327 @@
+% optimized formulation
+%
+% changes from optimized1.hex: represent magazines not as lists but as set of fluents with positions
+
+% #const base_class = "ai4industry:Can".
+% #const cap_class = "ai4industry:Cap".
+% #const base_provider_class = "ai4industry:BaseProviderUnit".
+% #const storage_unit_class = "ai4industry:StorageUnit".
+% #const can_feed_into_objectproperty = "ai4industry:canFeedInto".
+% #const storage_unit_individual = "ai4industry:storage1".
+
+% helper for defining modify(...) :- presscap(...)
+% presscapCanCapAssert(base_class, "ai4industry:BlueCap", "ai4industry:BlueCappedCan").
+% presscapCanCapAssert(base_class, "ai4industry:RedCap", "ai4industry:RedCappedCan").
+% presscapCanCapAssert(base_class, "ai4industry:WhiteCap", "ai4industry:WhiteCappedCan").
+
+#const base_class = "http://www.ai4eu.eu/pilot/ai4industry#Can".
+#const cap_class = "http://www.ai4eu.eu/pilot/ai4industry#Cap".
+#const base_provider_class = "http://www.ai4eu.eu/pilot/ai4industry#BaseProviderUnit".
+#const storage_unit_class = "http://www.ai4eu.eu/pilot/ai4industry#StorageUnit".
+#const can_feed_into_objectproperty = "http://www.ai4eu.eu/pilot/ai4industry#canFeedInto".
+% #const storage_unit_individual = "http://www.ai4eu.eu/pilot/ai4industry#storage1".
+
+
+% this is hardcoded because skillmatching does not provide effects, only conditions
+skill_workpiece_material_effect(
+    base_class,
+    "http://www.ai4eu.eu/pilot/ai4industry#BlueCap",
+    "http://www.ai4eu.eu/pilot/ai4industry#BlueCappedCan").
+skill_workpiece_material_effect(
+    base_class,
+    "http://www.ai4eu.eu/pilot/ai4industry#WhiteCap",
+    "http://www.ai4eu.eu/pilot/ai4industry#WhiteCappedCan").
+skill_workpiece_material_effect(
+    base_class,
+    "http://www.ai4eu.eu/pilot/ai4industry#RedCap",
+    "http://www.ai4eu.eu/pilot/ai4industry#RedCappedCan").
+
+time(0..maxTime).
+
+next(T,T+1) :- time(T), time(T+1).
+
+%
+% import raw graph of factory
+%
+
+canFeedInto(raw,WM1,WM2) :- &dlOPro[onto,can_feed_into_objectproperty](WM1,WM2).
+
+%
+% Fluent: in(Material,Machine,Time)
+%
+
+% inertia
+in(M,WM,T1) :- in(M,WM,T0), not -in(M,WM,T1), next(T0,T1).
+
+% exclusive occupation
+:- in(M1,Mod,T), in(M2,Mod,T), M1 < M2.
+
+% non-duplicate occupation
+:- in(Mat,Mod1,T), in(Mat,Mod2,T), Mod1 < Mod2.
+
+%
+% Fluent: modify(Idx,Assertion,Time)
+%
+% Idx is part of matid(Mat,Idx)
+%
+
+% inertia
+modify(Idx,Assertion,T1) :- modify(Idx,Assertion,T0), not -modify(Idx,Assertion,T1), next(T0,T1).
+
+% here we could have "addc(.,.) is the opposite of delc(.,.)" to define -modify and automatically handle multiple updates
+
+%
+% old: Fluent: storageContent(Module,ListOfItems,Time)
+% new: Fluent: storageContentAt(Module,Position,Item,Time)
+% Position=0 is Top of stack (pop/push takes from there/puts there)
+%
+% we have maximum storage amount in maxMagazineSize
+%
+% helper predicates for action effects that change this fluent in Time:
+% storageContentPop(Machine,Time-1)
+% storageContentPush(Machine,Material,Time-1)
+%
+#const maxMagazineSize = 3.
+
+% initialize fluent from input
+storageContentAt(M,Pos,Itm,0) :- storageContent(M,ListOfItems,0),
+  &list1[at(ListOfItems,Pos)](Itm),
+  &list1[len(ListOfItems)](Length), Pos = 0..(Length-1).
+
+% inertia
+storageContentAt(SU,Pos,Item,T1) :- storageContentAt(SU,Pos,Item,T0),
+  Pos < maxMagazineSize, not -storageContentAt(SU,Pos,Item,T1), next(T0,T1).
+
+% remove the first element: invalidate default future
+-storageContentAt(TM,Pos,Item,T1) :- storageContentPop(TM,T0),
+  storageContentAt(TM,Pos,Item,T0),
+  not storageContentAt(TM,Pos+1,Item,T0), % do not invalidate if the new item in the position is the same as the old one
+  next(T0,T1).
+
+% remove the first element: define correct future
+storageContentAt(TM,Pos-1,Item,T1) :- storageContentPop(TM,T0),
+  storageContentAt(TM,Pos,Item,T0), Pos > 0, next(T0,T1).
+
+% add a new first element: invalidate default future
+-storageContentAt(TM,Pos,Item,T1) :- storageContentPush(TM,M,T0),
+  storageContentAt(TM,Pos,Item,T0), next(T0,T1).
+
+% add a new first element: define correct future (1)
+storageContentAt(TM,Pos+1,Item,T1) :- storageContentPush(TM,M,T0),
+  storageContentAt(TM,Pos,Item,T0), Pos + 1 < maxMagazineSize, next(T0,T1).
+
+storageContentAt(TM,0,M,T1) :- storageContentPush(TM,M,T0), next(T0,T1).
+
+%
+% Action: supply(matidx(Idx,MaterialType),FeedingModule,T)
+%
+
+% executability: supply material MaterialType with index Idx to module FeedingModule
+action(supply(Mat,Module),T0) | -action(supply(Mat,Module),T0) :-
+  &dlCro[onto,base_provider_class](Module),
+  storageContentAt(Module,0,Mat,T0),
+  next(T0,_).
+
+% effect1: material is removed from the storage
+storageContentPop(FM,T0) :- storageContentAt(FM,_,_,T0), action(supply(_,FM),T0).
+
+% effect2: material is in module
+in(Mat,Module,T1) :- action(supply(Mat,Module),T0), next(T0,T1).
+
+%
+% Action: migrate(Material,WorkModule1,WorkModule2,T)
+%
+
+% executability: move material from module to connected module
+action(migrate(M,WM1,WM2),T0) | -action(migrate(M,WM1,WM2),T0) :-
+  in(M,WM1,T0), next(T0,_), canFeedInto(raw,WM1,WM2).
+
+% effect1: material is removed from WM1
+-in(M,WM1,T1) :- action(migrate(M,WM1,WM2),T0), next(T0,T1).
+
+% effect2: material is added to WM2
+in(M,WM2,T1) :- action(migrate(M,WM1,WM2),T0), next(T0,T1).
+
+%
+% action(presscap(Module,Cap,Can),Time)
+%
+
+% if a workpiece is in a machine that has some skill offer, we need to check the skill match
+skillmatch_relevant(SM,TM,Can,T0) :-
+    skillmatch_machine(SM,TM), in(Can,TM,T0), next(T0,_).
+
+% was some requirement not met at a certain timepoint?
+skillmatch_requirement_not_met(SM,Req,T0) :-
+    skillmatch_relevant(SM,TM,Can,T0),
+    skillmatch_workpiece_requirement(SM,Req),
+    Can = matidx(CanMat,CanIdx),
+    representedBy(CanMat,CanInst),
+    not &dlC[onto,delta,timeidx(T0,CanIdx),Req](CanInst).
+
+% were all requirements met at a certain timepoint?
+skillmatch_requirements_met(SM,TM,Can,T0) :-
+  skillmatch_relevant(SM,TM,Can,T0),
+  not skillmatch_requirement_not_met(SM,_,T0).
+
+%#show skillmatch_relevant/4.
+%#show skillmatch_requirement_not_met/3.
+%#show skillmatch_requirements_met/4.
+
+% TM = Treatment Module
+action(applyskill(SM,TM,Can,Cap),T0) | -action(applyskill(SM,TM,Can,Cap),T0) :-
+  % skillmatch is precondition
+  skillmatch_requirements_met(SM,TM,Can,T0), Can = matidx(CanMat,CanIdx), representedBy(CanMat,CanInst),
+  % plus some Cap in storage
+  storageContentAt(TM,0,Cap,T0), Cap = matidx(CapMat,CapIdx), representedBy(CapMat,CapInst),
+  % check type of cap against skill offer
+  skillmatch_offer(SM,CapClass), &dlC[onto,delta,timeidx(T0,CapIdx),CapClass](CapInst).
+
+% dbg(succeed_skillmatch_offer(SM,TM,Can,Cap,T0)) :-
+%   % skillmatch is precondition
+%   skillmatch_requirements_met(SM,TM,Can,T0), Can = matidx(CanMat,CanIdx), representedBy(CanMat,CanInst),
+%   % plus some Cap in storage
+%   storageContentAt(TM,0,Cap,T0), Cap = matidx(CapMat,CapIdx), representedBy(CapMat,CapInst),
+%   % check type of cap against skill offer
+%   skillmatch_offer(SM,CapClass), &dlC[onto,delta,timeidx(T0,CapIdx),CapClass](CapInst).
+
+% dbg(act(X,T)) :- action(X,T).
+
+% succeed_skillmatch_offer(sm0,presscap1,BlueCap,BlueCap,3)
+
+% effect1: material is removed from storage
+storageContentPop(TM,T0) :- action(applyskill(_,TM,_,_),T0).
+
+% effect2: work piece is modified (assertion is added)
+% assertion for this workpiece (matidx(.,.))
+modify(matidx(CanMat,CanIdx),addc(Result),T1) :-
+  % triggered by this
+  action(applyskill(SM,TM,matidx(CanMat,CanIdx),matidx(CapMat,CapIdx)),T0),
+  % templated by this
+  skill_workpiece_material_effect(CanMat,CapMat,Result),
+  next(T0,T1).
+
+%
+% action(store(Module,Material),Time)
+%
+action(store(StorageUnit,M),T0) | -action(store(StorageUnit,M),T0) :-
+  in(M,StorageUnit,T0),
+  &dlCro[onto,storage_unit_class](StorageUnit),
+  next(T0,_).
+
+% remove content from unit
+-in(M,StorageUnit,T1) :- action(store(StorageUnit,M),T0), next(T0,T1).
+
+% append material to storage
+storageContentPush(Machine,Material,T0) :-
+  action(store(Machine,Material),T0),
+  next(T0,T1).
+
+%
+% exclusive action execution on one item
+%
+
+exclusive(T,Mat,Module,supply) :- action(supply(Mat,Module),T).
+exclusive(T,M,WM1,migrate) :- action(migrate(M,WM1,WM2),T).
+exclusive(T,Can,TM,applyskill) :- action(applyskill(SM,TM,Can,Cap),T).
+exclusive(T,M,StorageUnit,store) :- action(store(StorageUnit,M),T).
+:- exclusive(T,Mat,Module,X), exclusive(T,Mat,Module,Y), X < Y.
+
+%
+% ontology modification
+%
+
+% define ontology modification based on modifications of work pieces
+delta(timeidx(T,CanIdx),addc(CAssert,CanInst)) :-
+  modify(matidx(CanMat,CanIdx),addc(CAssert),T),
+  representedBy(CanMat,CanInst).
+
+%:- delta(T,_), not &dlConsistent[onto,delta,T].
+
+%dbg(delta(X,Y)) :- delta(X,Y).
+
+%
+% goal
+%
+
+% overall_goal_reached :- goal_reached_at(_).
+
+% goal_reached_at(T) :- 
+%     storageContentAt(storage_unit_individual,0,Can1, T)
+%   , Can1 = matidx(CanMat1,CanMatIdx1)
+%   , representedBy(CanMat1,CanInst1)
+%   , &dlC[onto,delta,timeidx(T,CanMatIdx1),"ai4industry:WhiteCappedCan"](CanInst1).
+
+% goal_reached_at(T) :- 
+%     storageContentAt(storage_unit_individual,0,Can1,T)
+%   , Can1 = matidx(CanMat1,CanMatIdx1)
+%   , representedBy(CanMat1,CanInst1)
+%   , &dlC[onto,delta,timeidx(T,CanMatIdx1),"ai4industry:BlueCappedCan"](CanInst1).
+
+%  , storageContentAt(storage_unit_individual,1,Can2, T)
+%  , Can2 = matidx(CanMat2,CanMatIdx2)
+%  , representedBy(CanMat2,CanInst2)
+%  , &dlC[onto,delta,timeidx(T,CanMatIdx2),"ai4industry:RedCappedCan"](CanInst2).
+
+% #show goal_reached_at/1.
+
+% recall:
+% storageContentAt(Module,Position,Item,Time)
+% Position=0 is Top of stack (pop/push takes from there/puts there)
+
+overall_goal_reached :- not goal_part_not_reached(_).
+goal_part_not_reached(Id) :- goal_part(Id,_,_,_), not goal_part_reached_at(Id,_).
+goal_part_reached_at(Id,Time) :-
+      goal_part(Id,Module,Position,ItemClass)
+    , storageContentAt(Module,Position,matidx(ItemMat,ItemIdx),Time)
+    , representedBy(ItemMat,ItemInst)
+    , &dlC[onto,delta,timeidx(Time,ItemIdx),ItemClass](ItemInst).
+
+% goal_part(4711,storage_unit_individual,0,"ai4industry:BlueCappedCan").
+
+#show storageContentAt/4.
+#show in/3.
+#show action/2.
+%#show modify/3.
+#show overall_goal_reached/0.
+#show goal_part_reached_at/2.
+#show goal_part_not_reached/1.
+%#show modify(Material,Assertion,T) : modify(Material,Assertion,T), T = maxTime-1.
+
+% #show goodie/1.
+
+% debug
+
+%#show dbg/1.
+
+% require actions at step 0 through 6
+%require_action(0..6).
+%:- time(T), require_action(T), 0 == #count { A : action(A,T) }.
+
+% require supply at step 0
+%:- 0 == #count { A,B : action(supply(A,B),0) }.
+% require migrate in steps 1 through 3
+%:- T = 1..5, 0 == #count { A,B,C : action(migrate(A,B,C),T) }.
+
+% require skill action
+%presscapped :- action(applyskill(_,_,_,_),3).
+%:- not presscapped.
+%presscapped2 :- action(applyskill(_,_,_,_),T), T > 4.
+%:- not presscapped2.
+
+% require store action
+%stored :- action(store(_,_),_).
+%:- not stored.
+
+% only provide answer if goal reached
+%:- not overall_goal_reached.
+% highest priority: reach goal
+:~ not overall_goal_reached. [1@3]
+
+% second priority: if goal is not reached, minimize goal parts that are not reached
+:~ goal_part_not_reached(GP). [1@2,GP]
+
+% lowest priority: minimize actions and prefer earlier actions to later actions
+:~ action(A,T). [T@1,T,A] % minimize number of actions done and push all actions to beginning
+
+% second highest priority: if goal is not reached: maximize actions done (to see what can happen)
+%:~ not overall_goal_reached, action(A,T). [-1@2,T,A]
