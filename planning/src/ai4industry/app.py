@@ -226,7 +226,7 @@ class GRPCServicer(plgrpc.AI4IndustryPlanner):
             if aa['args'][0]['name'] == 'supply']
         # logging.warning("actionatoms = %s", actionatoms)
         logging.warning("supply_actions = %s", supply_actions)
-        for spec, timestep in supply_actions:
+        for spec, timestep in sorted(supply_actions, key=lambda spec_timestep: spec_timestep[1]):
             # we only need to extract the index from matidx
             idx = spec[0]['args'][1]
             # logging.warning("for product '%d' got timestep %s", idx, repr(timestep))
@@ -237,7 +237,8 @@ class GRPCServicer(plgrpc.AI4IndustryPlanner):
                     plpb.ProductInput(
                         product=str(idx),
                         type=stored_item_color[idx],
-                        timeEnteringSystem=float(timestep) + 1.0))
+                        # assumption of time estimation model: objects enter system in 4 second intervals
+                        timeEnteringSystem=float(timestep) * 4.0 + 1.0))
 
         return ret
 

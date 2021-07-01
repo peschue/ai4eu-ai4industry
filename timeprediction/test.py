@@ -28,8 +28,8 @@ def main():
         ),
         timeEstimateRequest=tppb.TimeEstimateRequest(
             products_entering_system=[
-                tppb.ProductInput(product='0', type='red', timeEnteringSystem=1.0),
-                tppb.ProductInput(product='1', type='blue', timeEnteringSystem=2.0),
+                tppb.ProductInput(product='1', type='red', timeEnteringSystem=1.0),
+                tppb.ProductInput(product='2', type='blue', timeEnteringSystem=6.0),
             ]
         )
     )
