@@ -54,7 +54,16 @@ class GUIServicerImpl(gui_pb2_grpc.AI4IndustryGUIServicer):
         ret.plannerRequest.ontology = ONTOLOGY
 
         try:
-            ret = self.to_protobuf_queue.get(block=True)
+            logging.info("requestPipelineRun waiting")
+            while True:
+                try:
+                    ret = self.to_protobuf_queue.get(block=True, timeout=1.0)
+                    break
+                except queue.Empty:
+                    if not context.is_active():
+                        raise RuntimeError("RPC interrupted - leaving requestPipelineRun")
+                    # otherwise retry
+            logging.info("received item %s", ret)
         except Exception:
             logging.warning("got exception %s", traceback.format_exc())
             time.sleep(1)
